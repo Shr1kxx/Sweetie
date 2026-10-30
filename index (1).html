@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Маркет</title>
+<style>
+:root{--bg:#0c1118;--panel:#151d28;--line:#243142;--text:#e9eef5;--dim:#8a99ad;--blue:#5bb4f5;--gold:#ffcf5a}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+header{padding:16px 20px;border-bottom:1px solid var(--line);font-size:20px;font-weight:700}main{max-width:960px;margin:0 auto;padding:24px 20px}
+nav{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap}nav button{padding:7px 14px;border:1px solid var(--line);border-radius:20px;color:var(--dim);background:none;font:inherit;cursor:pointer}
+nav button.on{background:var(--blue);border-color:var(--blue);color:#07121d;font-weight:600}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px;display:flex;flex-direction:column;gap:10px}
+.title{font-size:26px;font-weight:700;word-break:break-all}.dim{color:var(--dim);font-size:14px}.price{color:var(--gold);font-weight:700;font-size:18px}
+.btn{background:var(--blue);color:#07121d;border-radius:8px;padding:9px 16px;font-weight:600;text-align:center;text-decoration:none}
+a:focus-visible,button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+</style>
+</head>
+<body>
+<header>Маркет юзернеймов, номеров и NFT</header>
+<main><nav id="tabs"></nav><div class="grid" id="grid"><p class="dim">Загрузка…</p></div></main>
+<script>
+const KINDS = {username: "Юзернеймы", number: "Номера", nft: "NFT"};
+let data = {items: []}, kind = "";
+
+function el(tag, cls, text) {
+  const e = document.createElement(tag);
+  if (cls) e.className = cls;
+  if (text !== undefined) e.textContent = text;
+  return e;
+}
+
+function render() {
+  const tabs = document.getElementById("tabs");
+  tabs.replaceChildren();
+  for (const [k, label] of [["", "Все"], ...Object.entries(KINDS)]) {
+    const b = el("button", k === kind ? "on" : "", label);
+    b.onclick = () => { kind = k; render(); };
+    tabs.append(b);
+  }
+  const grid = document.getElementById("grid");
+  grid.replaceChildren();
+  const items = data.items.filter(i => !kind || i.kind === kind);
+  if (!items.length) { grid.append(el("p", "dim", "Лотов пока нет. Загляните позже.")); return; }
+  for (const i of items) {
+    const card = el("div", "card");
+    card.append(el("div", "title", i.kind === "username" ? "@" + i.title : i.title));
+    card.append(el("div", "dim", KINDS[i.kind] || i.kind));
+    card.append(el("div", "price", i.price + " ⭐"));
+    const href = (data.link || "").replace("{bot}", data.bot || "").replace("{id}", i.id);
+    if (/^https?:\/\//.test(href)) {
+      const a = el("a", "btn", "Купить в боте");
+      a.href = href;
+      card.append(a);
+    }
+    grid.append(card);
+  }
+}
+
+fetch("items.json?" + Date.now())
+  .then(r => r.json())
+  .then(d => { data = d; render(); })
+  .catch(() => { document.getElementById("grid").textContent = "Не удалось загрузить каталог"; });
+render();
+</script>
+</body>
+</html>
