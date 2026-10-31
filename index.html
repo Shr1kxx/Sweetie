@@ -110,6 +110,13 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--gold);outline-offse
 <nav class="tabbar" id="tabbar"></nav>
 <div class="modal" id="modal"><div class="sheet" id="sheet"></div></div>
 <script>
+      function openUrl(url){
+  if (window.Telegram && window.Telegram.WebApp) {
+    window.Telegram.WebApp.openTelegramLink(url);
+  } else {
+    window.location.href = url;
+  }
+      }
 let D={cases:[],items:[],bot:"",link:"",api:"",live:[]},tab="home",TOKEN="",ME=null,busy=false,INV=[];
 try{TOKEN=localStorage.getItem("sc_t")||"";}catch(e){}
 const hs=new URLSearchParams(location.hash.slice(1));
