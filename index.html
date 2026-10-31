@@ -525,11 +525,12 @@ Promise.all([
   render();return loadMe();
 });
 balance();render();
-</script>
-      setInterval(() => {
+
+setInterval(() => {
   document.querySelectorAll('a').forEach(a => {
     if (a.href && a.href.includes('t.me')) {
       a.onclick = (e) => { e.preventDefault(); Telegram.WebApp.openTelegramLink(a.href); };
     }
   });
-}, 500);</body></html>
+}, 500);
+</script></body></html>
