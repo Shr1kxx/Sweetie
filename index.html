@@ -526,6 +526,34 @@ Promise.all([
 });
 balance();render();
 
+// 1. Инициализация Telegram Mini App
+if (window.Telegram && window.Telegram.WebApp) {
+    window.Telegram.WebApp.ready();
+    window.Telegram.WebApp.expand();
+}
+
+// 2. Перехватчик кликов для всех ссылок
+document.addEventListener('click', function(e) {
+    // Ищем, не кликнули ли мы по ссылке или кнопке
+    const link = e.target.closest('a') || e.target.closest('.btn') || e.target.closest('.big') || e.target.closest('.plus');
+    
+    if (link) {
+        // Достаем ссылку (из href или из скрытого атрибута)
+        const url = link.getAttribute('href') || link.dataset.url;
+        
+        // Если ссылка ведет в телеграм
+        if (url && url.includes('t.me')) {
+            e.preventDefault(); // Отменяем стандартный переход
+            if (window.Telegram && window.Telegram.WebApp) {
+                window.Telegram.WebApp.openTelegramLink(url);
+            } else {
+                window.location.href = url;
+            }
+        }
+    }
+});
+</script></body></html>
+
 setInterval(() => {
   document.querySelectorAll('a').forEach(a => {
     if (a.href && a.href.includes('t.me')) {
