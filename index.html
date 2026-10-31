@@ -126,6 +126,78 @@ const el=(t,c,x)=>{const e=document.createElement(t);if(c)e.className=c;if(x!==u
 const ico=p=>p.kind==="stars"?"⭐":"🎁";
 const TOPUPS=[50,100,250,500,1000];
 
+// Подтягиваем данные из Telegram, чтобы профиль работал сразу
+const tg = window.Telegram?.WebApp?.initDataUnsafe?.user;
+if(tg && !ME) {
+  ME = { id: tg.id, name: tg.first_name || tg.username || "Игрок", balance: 0, photo: tg.photo_url };
+}
+
+function bot(param){
+  const b=(D.link||"").replace("{bot}",D.bot||"").replace(/\?start=.*/,"?start="+param);
+  return /^https?:\/\//.test(b)?b:"";
+}
+
+function openUrl(url){
+  if(window.Telegram && window.Telegram.WebApp) {
+    window.Telegram.WebApp.openTelegramLink(url);
+  } else {
+    window.location.href = url;
+  }
+}
+
+async function api(path,body){
+  // Если нет api, возвращаем фейковые данные, чтобы сайт не ломался
+  if(!D.api) return {balance: 0, items: []}; 
+  const r=await fetch(D.api+path,{method:body?"POST":"GET",headers:Object.assign({"Content-Type":"application/json"},TOKEN?{Authorization:"Bearer "+TOKEN}:{}),body:body?JSON.stringify(body):undefined});
+  const j=await r.json().catch(()=>({}));
+  if(!r.ok){const e=new Error(j.error||"Ошибка");e.status=r.status;throw e;}
+  return j;
+}
+
+async function loadMe(){
+  if(D.api){try{D.live=(await api("/api/live")).live||[];}catch(e){}}
+  
+  if(D.api && TOKEN){
+    try {
+      const realMe = await api("/api/me");
+      if(ME) {
+        ME.balance = realMe.balance;
+        ME.name = realMe.name || ME.name;
+      } else {
+        ME = { id: realMe.id, name: realMe.name, balance: realMe.balance };
+      }
+    } catch(e) {}
+  }
+  
+  if(ME && D.api) {
+    try{INV=(await api("/api/inventory")).items||[];}catch(e){INV=[];}
+  }
+  balance();render();
+}
+
+function balance(){
+  const box=$("bal");box.replaceChildren();
+  
+  // Если данных о юзере нет вообще (открыто в браузере вне ТГ)
+  if(!ME) {
+    box.append(el("span","","👤"),el("span","","Гость"));
+    return;
+  }
+
+  // Аватарка
+  if(ME.photo) {
+    const img = el("img");
+    img.src = ME.photo;
+    img.style.cssText = "width:24px;height:24px;border-radius:50%;object-fit:cover;margin-right:4px;";
+    box.append(img);
+  } else {
+    box.append(el("span","","👤"));
+  }
+
+  // Имя и Баланс (виден всегда, даже 0)
+  const b = ME.balance || 0;
+  box.append(el("span","", ME.name.split(' ')[0]), el("span","","⭐"), el("span","", String(b)));
+      }
 
 function bot(param){const b=(D.link||"").replace("{bot}",D.bot||"").replace(/\?start=.*/,"?start="+param);return /^https?:\/\//.test(b)?b:"";}
 
