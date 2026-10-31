@@ -531,32 +531,104 @@ Promise.all([
   D={cases:c.cases||[],items:i.items||[],bot:c.bot||i.bot||"",link:c.link||i.link||"",api:(c.api||"").replace(/\/$/,""),live:[]};
   render();return loadMe();
 });
-balance();render();
-
-// Инициализация
-if (window.Telegram?.WebApp) {
-    window.Telegram.WebApp.ready();
+function openProfile(){
+  const wrap=el("div","");
+  if(ME){
+    wrap.append(el("h2","","👤 "+ME.name),el("div","dim","ID "+ME.id));
+    wrap.append(el("div","price","⭐ "+ME.balance));
+    const g=el("div","grid2");
+    const b1=el("button","btn o","Пополнить");b1.onclick=openTopup;
+    const b2=el("button","btn r","Вывести");b2.onclick=openWithdraw;
+    const b3=el("button","btn","Инвентарь");b3.onclick=openInv;
+    g.append(b1,b2,b3);
+    wrap.append(g);
+    const out=el("button","btn o","Выйти");
+    out.style.background="#3a3d4d";
+    out.onclick=()=>{try{localStorage.removeItem("sc_t");}catch(e){}TOKEN="";ME=null;INV=[];balance();render();};
+    wrap.append(out);
+  }else{
+    wrap.append(el("h2","","Гость"),el("div","dim","Войдите через бота."));
+    const a=el("button","btn o","Войти через бота");
+    a.onclick=()=>openUrl(bot("site"));
+    wrap.append(a);
+  }
+  sheet(wrap);
 }
 
-// Перехватчик кликов по всей странице
-document.addEventListener('click', function(e) {
-    // Если нажали на кнопку или ссылку
-    const btn = e.target.closest('a, button');
-    if (!btn) return;
+function render(){
+  const v=$("view");v.replaceChildren();
+  const tabs=[["home","🎮","Главная"],["games","🎲","Игры"],["cases","📦","Кейсы"],["nft","🖼","NFT"],["me","👤","Профиль"]];
+  const bar=$("tabbar");bar.replaceChildren();
+  for(const [k,i,t] of tabs){
+    const b=el("button",k===tab?"on":"");
+    b.append(el("span","i",i),el("span","",t));
+    b.onclick=()=>{tab=k;render();window.scrollTo(0,0);};
+    bar.append(b);
+  }
+  const items=D.items.filter(i=>i.kind==="nft");
 
-    // Берем текст с кнопки
-    const text = btn.innerText || "";
-
-    // Если на кнопке написано "Войти" или "Пополнить в боте" или "Открыть бота"
-    if (text.includes('Войти') || text.includes('Открыть бота') || text.includes('в боте')) {
-        e.preventDefault(); // Отменяем стандартное поведение
-        
-        // Закрываем мини-апп. Пользователь окажется в чате с ботом.
-        if (window.Telegram?.WebApp) {
-            window.Telegram.WebApp.close();
-        } else {
-            window.location.reload(); // Если открыто в браузере - просто перезагружаем
-        }
+  if(tab==="home"){
+    const top=D.live.length?D.live:D.cases.map(c=>c.prizes[0]).filter(Boolean);
+    const lv=el("div","live");lv.append(el("b","",D.live.length?"LIVE":"TOP"));
+    if(!top.length)lv.append(el("span","dim","Скоро здесь появятся дропы"));
+    for(const p of top.slice(0,20))lv.append(el("span","",ico(p)));
+    v.append(lv,
+      big("gb","📦","Кейсы",D.cases.length+" кейсов",()=>{tab="cases";render();}),
+      big("gp","🎮","Игры","Мины · Апгрейд · Плинко",()=>{tab="games";render();},"NEW"),
+      big("gu","🖼","NFT-лоты",items.length+" лотов",()=>{tab="nft";render();}),
+      big("go","⭐","Пополнить","Баланс общий с ботом",openTopup),
+      el("div","hint","Шансы точные: именно по ним сервер выбирает приз."));
+  }else if(tab==="games"){
+    v.append(el("h2","sec","🎲 Игры"));
+    v.append(
+      big("gm","💣","Мины","Ставка · поле 5×5 · открывайте клетки",openMines),
+      big("gu","📈","Апгрейд","Шанс = 1/множитель",openUpgrade),
+      big("gpl","🎯","Плинко","Шарик падает · множители по краям",openPlinko),
+      el("div","hint","Все игры считаются на сервере. Баланс общий с ботом."));
+  }else if(tab==="cases"){
+    v.append(el("h2","sec","📦 Кейсы"));
+    if(!D.cases.length)v.append(el("div","hint","👻 Кейсов пока нет. Загляните позже."));
+    for(const c of D.cases){
+      v.append(big("gp","📦",c.title,"призов: "+c.prizes.length,()=>openCase(c),"",c.price+" ⭐"));
     }
+  }else if(tab==="nft"){
+    v.append(el("h2","sec","🖼 NFT-лоты"));
+    if(!items.length)v.append(el("div","hint","👻 NFT-лотов пока нет."));
+    for(const i of items){
+      v.append(big("gp","🖼",i.title,"NFT",()=>openUrl(bot("buy_"+i.id)),"",i.price+" ⭐"));
+    }
+  }else{
+    v.append(el("h2","sec","👤 Профиль"));
+    if(ME){
+      v.append(big("gu","👤",ME.name,"ID "+ME.id+" · баланс "+ME.balance+" ⭐",openProfile));
+      const g=el("div","grid2");
+      const b1=el("button","btn o","💰 Пополнить");b1.onclick=openTopup;
+      const b2=el("button","btn r","💸 Вывести");b2.onclick=openWithdraw;
+      const b3=el("button","btn","🎁 Инвентарь ("+INV.length+")");b3.onclick=openInv;
+      g.append(b1,b2,b3);
+      g.style.padding="0 14px";
+      v.append(g);
+      const out=el("button","btn o","Выйти");
+      out.style.cssText="margin:10px 14px;background:#3a3d4d";
+      out.onclick=()=>{try{localStorage.removeItem("sc_t");}catch(e){}TOKEN="";ME=null;INV=[];balance();render();};
+      v.append(out);
+    }else{
+      v.append(el("div","hint","Войдите через бота, чтобы видеть баланс и инвентарь."));
+      const a=el("button","plus","Войти через бота");
+      a.style.cssText="margin:0 14px;display:block;width:calc(100% - 28px);text-align:center";
+      a.onclick=()=>openUrl(bot("site"));
+      v.append(a);
+    }
+  }
+}
+
+$("modal").onclick=e=>{if(e.target.id==="modal"&&!busy)$("modal").classList.remove("show");};
+Promise.all([
+  fetch("cases.json?"+Date.now()).then(r=>r.json()).catch(()=>({})),
+  fetch("items.json?"+Date.now()).then(r=>r.json()).catch(()=>({}))
+]).then(([c,i])=>{
+  D={cases:c.cases||[],items:i.items||[],bot:c.bot||i.bot||"",link:c.link||i.link||"",api:(c.api||"").replace(/\/$/,""),live:[]};
+  render();return loadMe();
 });
+balance();render();
 </script></body></html>
