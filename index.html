@@ -553,12 +553,3 @@ document.addEventListener('click', function(e) {
     }
 });
 </script></body></html>
-
-setInterval(() => {
-  document.querySelectorAll('a').forEach(a => {
-    if (a.href && a.href.includes('t.me')) {
-      a.onclick = (e) => { e.preventDefault(); Telegram.WebApp.openTelegramLink(a.href); };
-    }
-  });
-}, 500);
-</script></body></html>
