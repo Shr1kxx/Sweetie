@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Fox Case</title>
+<style>
+:root{--bg:#1b1c22;--card:#2b2d37;--text:#f2f3f8;--dim:#9a9fb2;--blue:#2f7bff;--gold:#ffc83d;--green:#2ee66b}
+*{box-sizing:border-box}html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;padding-bottom:96px}
+#app{max-width:560px;margin:0 auto}
+.top{display:flex;justify-content:center;align-items:center;gap:10px;padding:16px 14px 6px;font-size:21px;font-weight:600}
+.balwrap{display:flex;justify-content:center;padding:8px 14px}
+.bal{display:flex;align-items:center;gap:12px;background:var(--card);border-radius:34px;padding:10px 12px 10px 24px;font-size:26px;font-weight:700}
+.plus{background:var(--blue);color:#fff;border:0;border-radius:22px;padding:11px 22px;font:600 17px inherit;text-decoration:none;cursor:pointer}
+.live{display:flex;align-items:center;gap:16px;background:var(--card);border-radius:28px;padding:16px 22px;margin:16px 14px;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.live b{font-size:32px;font-weight:800;letter-spacing:1px}.live .it{flex:0 0 auto;font-size:44px;line-height:1}
+.big{display:flex;align-items:center;gap:20px;margin:14px;border-radius:36px;padding:22px 26px;min-height:124px;cursor:pointer;position:relative;overflow:hidden;border:0;color:#fff;width:calc(100% - 28px);text-align:left;font:inherit}
+.big .em{font-size:72px;line-height:1;flex:0 0 auto}.big h3{margin:0;font-size:30px;font-weight:700}.big small{opacity:.85;font-size:19px;display:block}
+.badge{display:inline-block;background:#fff;color:#111;border-radius:20px;padding:4px 16px;font-weight:600;font-size:17px;margin-top:6px}
+.pr{margin-left:auto;background:rgba(0,0,0,.28);border-radius:20px;padding:8px 16px;font-weight:700;font-size:20px;white-space:nowrap}
+.gb{background:linear-gradient(135deg,#1d57cf,#3182ff)}.gp{background:linear-gradient(135deg,#6a21cc,#8f3fe6)}.go{background:linear-gradient(135deg,#8e4aa0,#e8896b)}.gg{background:linear-gradient(135deg,#34384a,#464b63)}
+.g0{background:linear-gradient(135deg,#1d57cf,#3182ff)}.g1{background:linear-gradient(135deg,#6a21cc,#8f3fe6)}.g2{background:linear-gradient(135deg,#a2237f,#e046b8)}
+.g3{background:linear-gradient(135deg,#a3192e,#e23a52)}.g4{background:linear-gradient(135deg,#9b6a10,#f2b035)}.g5{background:linear-gradient(135deg,#34384a,#4a5069)}
+h2.sec{margin:20px 18px 4px;font-size:22px}.hint{color:var(--dim);text-align:center;font-size:13px;margin:22px 20px}
+.tabbar{position:fixed;left:0;right:0;bottom:0;display:flex;background:#23242c;border-top:1px solid #353744;padding:8px 4px calc(8px + env(safe-area-inset-bottom))}
+.tabbar button{flex:1;background:none;border:0;color:#8e93a6;font:600 13px inherit;display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer}
+.tabbar button.on{color:#3d8bff}.tabbar .i{font-size:26px}
+.modal{position:fixed;left:0;right:0;top:0;bottom:0;background:rgba(0,0,0,.7);display:none;align-items:flex-end;justify-content:center;z-index:9}.modal.show{display:flex}
+.sheet{background:#22232b;border-radius:30px 30px 0 0;width:100%;max-width:560px;max-height:90vh;overflow:auto;padding:20px;padding-bottom:calc(20px + env(safe-area-inset-bottom))}
+.x{float:right;background:none;border:0;color:var(--dim);font-size:30px;cursor:pointer}
+.price{color:var(--gold);font-weight:800;font-size:20px}.dim{color:var(--dim);font-size:14px}.msg{color:var(--gold);text-align:center;margin:10px 0;min-height:22px}
+.r0{--c:#4b8bff;--cg:rgba(75,139,255,.45)}.r1{--c:#9b5cff;--cg:rgba(155,92,255,.45)}.r2{--c:#ff4fd8;--cg:rgba(255,79,216,.45)}
+.r3{--c:#ff3b3b;--cg:rgba(255,59,59,.45)}.r4{--c:#ffc83d;--cg:rgba(255,200,61,.5)}.r5{--c:#9aa3bd;--cg:rgba(154,163,189,.35)}
+.prizes{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px;margin:14px 0}
+.prize,.tile,.win{border:2px solid var(--c);border-radius:16px;background:#2b2d37;box-shadow:0 0 16px var(--cg)}
+.prize{padding:12px 6px;text-align:center}.prize .e{font-size:32px}.prize .t{font-weight:700;font-size:14px;word-break:break-word}.prize .p{color:var(--c);font-weight:800;font-size:13px}
+.roll{position:relative;overflow:hidden;border-radius:18px;margin:14px 0;background:#181920;padding:12px 0}
+.strip{display:flex;transition:transform 4.2s cubic-bezier(.12,.7,.1,1)}
+.tile{flex:0 0 100px;margin:0 5px;padding:8px 4px;text-align:center}.tile .e{font-size:28px}.tile .t{font-size:12px;font-weight:700;word-break:break-word}
+.needle{position:absolute;left:50%;top:0;bottom:0;width:3px;background:var(--green);box-shadow:0 0 12px var(--green)}
+.win{text-align:center;padding:16px}.win .e{font-size:58px}
+.btn{display:block;width:100%;margin-top:12px;background:var(--green);color:#05200e;border:0;border-radius:18px;padding:15px;font:800 18px inherit;text-align:center;text-decoration:none;cursor:pointer}
+.btn.o{background:var(--blue);color:#fff}.btn:disabled{opacity:.5}
+.grid2{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:14px 0}
+a:focus-visible,button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+@media(prefers-reduced-motion:reduce){.strip{transition:none}}
+</style></head>
+<body>
+<div id="app">
+<div class="top"><span>🦊</span> Fox Case</div>
+<div class="balwrap"><div class="bal" id="bal"></div></div>
+<div id="view"></div>
+</div>
+<nav class="tabbar" id="tabbar"></nav>
+<div class="modal" id="modal"><div class="sheet" id="sheet"></div></div>
+<script>
+let D = {cases: [], items: [], bot: "", link: "", api: "", live: []}, tab = "home", TOKEN = "", ME = null, busy = false;
+try { TOKEN = localStorage.getItem("fc_s") || ""; } catch (e) {}
+const hs = new URLSearchParams(location.hash.slice(1));
+if (hs.get("s")) { TOKEN = hs.get("s"); try { localStorage.setItem("fc_s", TOKEN); } catch (e) {} history.replaceState(null, "", location.pathname + location.search); }
+const $ = id => document.getElementById(id);
+const el = (t, c, x) => { const e = document.createElement(t); if (c) e.className = c; if (x !== undefined) e.textContent = x; return e; };
+const rn = p => p < 1 ? 4 : p < 5 ? 3 : p < 15 ? 2 : p < 35 ? 1 : p < 60 ? 0 : 5;
+const rar = p => "r" + rn(p), ico = p => p.kind === "stars" ? "⭐" : "🎁";
+const TOPUPS = [50, 100, 250, 500, 1000];
+function bot(param) { const b = (D.link || "").replace("{bot}", D.bot || "").replace(/\?start=.*/, "?start=" + param); return /^https?:\/\//.test(b) ? b : ""; }
+async function api(path, body) {
+  const r = await fetch(D.api + path, {method: body ? "POST" : "GET", headers: Object.assign({"Content-Type": "application/json"}, TOKEN ? {Authorization: "Bearer " + TOKEN} : {}), body: body ? JSON.stringify(body) : undefined});
+  const j = await r.json().catch(() => ({}));
+  if (!r.ok) { const e = new Error(j.error || "Ошибка"); e.status = r.status; throw e; }
+  return j;
+}
+async function loadMe() {
+  if (D.api) { try { D.live = (await api("/api/live")).live || []; } catch (e) {} }
+  if (!D.api || !TOKEN) { ME = null; balance(); return render(); }
+  try { ME = await api("/api/me"); } catch (e) { ME = null; if (e.status === 401) { TOKEN = ""; try { localStorage.removeItem("fc_s"); } catch (x) {} } }
+  balance(); render();
+}
+function balance() {
+  const box = $("bal"); box.replaceChildren();
+  if (ME) { const b = el("button", "plus", "Пополнить"); b.onclick = openTopup; box.append(el("span", "", "⭐"), el("span", "", String(ME.balance)), b); }
+  else if (D.api) { const a = el("a", "plus", "Войти через бота"); a.href = bot("site") || "#"; box.append(el("span", "", "👤"), a); }
+  else { const a = el("a", "plus", "Пополнить в боте"); a.href = bot("topup") || "#"; box.append(el("span", "", "⭐"), a); }
+}
+function sheet(...nodes) {
+  const s = $("sheet"); s.replaceChildren(); const x = el("button", "x", "×"); x.onclick = () => { if (!busy) $("modal").classList.remove("show"); };
+  s.append(x, ...nodes); $("modal").classList.add("show"); return s;
+}
+function openTopup() {
+  const msg = el("div", "msg"), g = el("div", "grid2");
+  if (!ME) { const a = el("a", "btn o", "Пополнить в боте"); a.href = bot("topup") || "#"; sheet(el("h2", "", "Пополнение"), a); return; }
+  for (const n of TOPUPS) { const b = el("button", "btn o", "+" + n + " ⭐"); b.onclick = async () => {
+    try { await api("/api/topup", {amount: n}); msg.textContent = "Счёт отправлен в бота: оплатите его там, баланс обновится сам."; const t0 = Date.now(), old = ME.balance;
+      const iv = setInterval(async () => { await loadMe(); if ((ME && ME.balance !== old) || Date.now() - t0 > 120000) clearInterval(iv); }, 4000);
+    } catch (e) { msg.textContent = e.message; } }; g.append(b); }
+  const a = el("a", "btn", "Открыть бота"); a.href = bot("topup") || "#";
+  sheet(el("h2", "", "Пополнение баланса"), el("div", "dim", "Оплата Stars в чате с ботом."), g, msg, a);
+}
+function tile(p) { const d = el("div", "tile " + rar(p.chance)); d.append(el("div", "e", ico(p)), el("div", "t", p.title)); return d; }
+async function spin(c) {
+  if (busy) return; busy = true;
+  let res; try { res = await api("/api/open", {case_id: c.id}); } catch (e) { busy = false; alert(e.message); return; }
+  ME.balance = res.balance;
+  const N = 40, WIN = 33, box = el("div", "roll"), strip = el("div", "strip"), pool = [];
+  for (const p of c.prizes) for (let i = 0; i < Math.max(1, Math.round(p.chance)); i++) pool.push(p);
+  const won = c.prizes.find(x => x.title === res.prize.title) || {title: res.prize.title, kind: res.prize.kind, chance: 50};
+  for (let i = 0; i < N; i++) strip.append(tile(i === WIN ? won : pool[Math.floor(Math.random() * pool.length)]));
+  box.append(strip, el("div", "needle")); sheet(el("h2", "", "📦 " + c.title), box);
+  requestAnimationFrame(() => requestAnimationFrame(() => { strip.style.transform = "translateX(" + (-(WIN * 110 - box.clientWidth / 2 + 55)) + "px)"; }));
+  setTimeout(() => {
+    const w = el("div", "win " + rar(won.chance)); w.append(el("div", "e", ico(won)), el("h2", "", won.title),
+      el("div", "dim", won.kind === "stars" ? "Уже на балансе" : "Владелец выдаст приз — он уже уведомлён"));
+    const again = el("button", "btn", "🎰 Ещё раз (" + c.price + " ⭐)"); again.onclick = () => spin(c);
+    busy = false; sheet(el("h2", "", "📦 " + c.title), w, el("div", "price", "⭐ " + res.balance), again); balance();
+  }, 4500);
+}
+function openCase(c) {
+  const g = el("div", "prizes");
+  for (const p of c.prizes) { const d = el("div", "prize " + rar(p.chance)); d.append(el("div", "e", ico(p)), el("div", "t", p.title), el("div", "p", p.chance + "%")); g.append(d); }
+  let act;
+  if (ME) { act = el("button", "btn", "🎰 Открыть за " + c.price + " ⭐"); act.onclick = () => spin(c); }
+  else { act = el("a", "btn", D.api ? "Войти через бота и открыть" : "🎰 Открыть в боте"); act.href = (D.api ? bot("site") : bot("case_" + c.id)) || "#"; }
+  sheet(el("h2", "", "📦 " + c.title), el("div", "price", c.price + " ⭐"), g, act);
+}
+function big(cls, em, title, sub, onclick, badge, price) {
+  const b = el("button", "big " + cls), t = el("div", ""); b.onclick = onclick;
+  t.append(el("h3", "", title), el("small", "", sub)); if (badge) t.append(el("span", "badge", badge));
+  b.append(el("div", "em", em), t); if (price) b.append(el("div", "pr", price)); return b;
+}
+function render() {
+  const v = $("view"); v.replaceChildren();
+  const tabs = [["home", "🎮", "Игры"], ["cases", "🎰", "Кейсы"], ["nft", "🖼", "NFT"], ["me", "👤", "Профиль"]], bar = $("tabbar"); bar.replaceChildren();
+  for (const [k, i, t] of tabs) { const b = el("button", k === tab ? "on" : ""); b.append(el("span", "i", i), el("span", "", t)); b.onclick = () => { tab = k; render(); window.scrollTo(0, 0); }; bar.append(b); }
+  const items = D.items.filter(i => i.kind === "nft");
+  if (tab === "home") {
+    const top = D.live.length ? D.live : D.cases.map(c => c.prizes[0]).filter(Boolean);
+    const lv = el("div", "live"); lv.append(el("b", "", D.live.length ? "LIVE" : "TOP"));
+    if (!top.length) lv.append(el("span", "dim", "Скоро здесь появятся дропы"));
+    for (const p of top.slice(0, 20)) lv.append(el("span", "it", ico(p)));
+    v.append(lv,
+      big("gb", "📦", "Кейсы", D.cases.length + " кейсов", () => { tab = "cases"; render(); }),
+      big("gp", "🖼", "NFT-лоты", items.length + " лотов", () => { tab = "nft"; render(); }, "Хэллоуин"),
+      big("go", "⭐", "Пополнить", "Баланс общий с ботом", openTopup),
+      el("div", "hint", "Шансы точные: именно по ним сервер выбирает приз."));
+  } else if (tab === "cases") {
+    v.append(el("h2", "sec", "Кейсы"));
+    if (!D.cases.length) v.append(el("div", "hint", "👻 Кейсов пока нет. Загляните позже."));
+    for (const c of D.cases) v.append(big("g" + (c.prizes.length ? rn(c.prizes[0].chance) : 0), "📦", c.title, "призов: " + c.prizes.length, () => openCase(c), "", c.price + " ⭐"));
+  } else if (tab === "nft") {
+    v.append(el("h2", "sec", "NFT-лоты"));
+    if (!items.length) v.append(el("div", "hint", "👻 NFT-лотов пока нет."));
+    for (const i of items) v.append(big("gp", "🖼", i.title, "NFT", () => { const a = bot("buy_" + i.id); if (a) location.href = a; }, "", i.price + " ⭐"));
+  } else {
+    v.append(el("h2", "sec", "Профиль"));
+    const c = el("div", "live"); c.style.flexDirection = "column"; c.style.alignItems = "flex-start";
+    c.append(el("b", "", ME ? ME.name : "Гость"), el("span", "dim", ME ? "ID " + ME.id : "Войдите через бота, чтобы видеть баланс"), el("span", "price", ME ? "⭐ " + ME.balance : ""));
+    v.append(c);
+    if (ME) { const b = el("button", "plus", "Пополнить"); b.style.margin = "0 14px"; b.onclick = openTopup; v.append(b);
+      const o = el("button", "plus", "Выйти"); o.style.cssText = "margin:12px 14px;background:#3a3d4d"; o.onclick = () => { try { localStorage.removeItem("fc_s"); } catch (e) {} TOKEN = ""; ME = null; balance(); render(); }; v.append(o); }
+    else { const a = el("a", "plus", "Войти через бота"); a.style.cssText = "margin:0 14px;display:inline-block"; a.href = bot("site") || "#"; v.append(a); }
+  }
+}
+$("modal").onclick = e => { if (e.target.id === "modal" && !busy) $("modal").classList.remove("show"); };
+Promise.all([fetch("cases.json?" + Date.now()).then(r => r.json()).catch(() => ({})), fetch("items.json?" + Date.now()).then(r => r.json()).catch(() => ({}))])
+  .then(([c, i]) => { D = {cases: c.cases || [], items: i.items || [], bot: c.bot || i.bot || "", link: c.link || i.link || "", api: (c.api || "").replace(/\/$/, ""), live: []}; render(); return loadMe(); });
+balance(); render();
+</script></body></html>
