@@ -515,10 +515,10 @@ function render(){
       v.append(out);
     }else{
       v.append(el("div","hint","Войдите через бота, чтобы видеть баланс и инвентарь."));
-      const a=el("a","plus","Войти через бота");
-      a.style.cssText="margin:0 14px;display:inline-block;text-align:center";
-      a.href=bot("site")||"#";
-      v.append(a);
+const a=el("button","plus","Войти через бота");
+a.style.cssText="margin:0 14px;display:block;width:calc(100% - 28px);text-align:center";
+a.onclick = () => openUrl(bot("site"));
+v.append(a);
     }
   }
 }
