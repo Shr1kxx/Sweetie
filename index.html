@@ -1,0 +1,529 @@
+```html
+<!doctype html>
+<html lang="ru"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Sweetie Case</title>
+<style>
+:root{--bg:#14121a;--card:#211d2c;--line:#332b47;--text:#f4efff;--dim:#9b91b5;
+      --pink:#ff5fa2;--purple:#a05cff;--green:#3ce07a;--gold:#ffc83d;--red:#ff4d5e}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:radial-gradient(900px 400px at 50% -5%,#3a1d58 0,var(--bg) 65%);
+     color:var(--text);font:14px/1.35 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+     padding-bottom:70px;min-height:100vh}
+#app{max-width:480px;margin:0 auto}
+.top{display:flex;justify-content:space-between;align-items:center;padding:12px 14px 4px}
+.top h1{margin:0;font-size:19px;font-weight:800;background:linear-gradient(90deg,var(--pink),var(--purple));
+        -webkit-background-clip:text;background-clip:text;color:transparent}
+.balwrap{display:flex;padding:6px 14px}
+.bal{display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--line);
+     border-radius:20px;padding:7px 8px 7px 14px;font-size:17px;font-weight:700;flex:1}
+.plus{background:linear-gradient(135deg,var(--purple),var(--pink));color:#fff;border:0;
+      border-radius:14px;padding:7px 12px;font:600 13px inherit;text-decoration:none;cursor:pointer}
+.live{display:flex;align-items:center;gap:8px;background:var(--card);border-radius:16px;
+      padding:8px 12px;margin:10px 14px;overflow-x:auto;font-size:22px}
+.live b{font-size:12px;color:var(--pink);letter-spacing:1px}
+.big{display:flex;align-items:center;gap:12px;margin:8px 14px;border-radius:16px;
+     padding:12px 14px;min-height:64px;cursor:pointer;border:0;color:#fff;
+     width:calc(100% - 28px);text-align:left;font:inherit;position:relative;overflow:hidden}
+.big .em{font-size:32px;line-height:1;flex:0 0 auto}
+.big h3{margin:0;font-size:16px;font-weight:700}
+.big small{opacity:.85;font-size:12px;display:block}
+.big .pr{margin-left:auto;background:rgba(0,0,0,.3);border-radius:12px;padding:4px 10px;
+         font-weight:700;font-size:13px;white-space:nowrap}
+.gb{background:linear-gradient(135deg,#2b6bff,#4d9bff)}
+.gp{background:linear-gradient(135deg,#7a3fd0,#c25cff)}
+.go{background:linear-gradient(135deg,#8e4aa0,#e8896b)}
+.gm{background:linear-gradient(135deg,#c0392b,#ff7b5a)}
+.gu{background:linear-gradient(135deg,#1e7a4a,#3ce07a)}
+.gpl{background:linear-gradient(135deg,#2f4858,#4d7c9a)}
+h2.sec{margin:16px 14px 4px;font-size:16px}
+.hint{color:var(--dim);text-align:center;font-size:12px;margin:16px 14px}
+.tabbar{position:fixed;left:0;right:0;bottom:0;display:flex;background:#1a1722;
+        border-top:1px solid var(--line);padding:6px 4px calc(6px + env(safe-area-inset-bottom))}
+.tabbar button{flex:1;background:none;border:0;color:#7c7392;font:600 10px inherit;
+               display:flex;flex-direction:column;align-items:center;gap:1px;cursor:pointer;padding:2px}
+.tabbar button.on{color:var(--pink)}
+.tabbar .i{font-size:20px}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.75);display:none;align-items:flex-end;
+       justify-content:center;z-index:9}
+.modal.show{display:flex}
+.sheet{background:#1e1a29;border-radius:22px 22px 0 0;width:100%;max-width:480px;max-height:88vh;
+       overflow:auto;padding:16px;padding-bottom:calc(16px + env(safe-area-inset-bottom))}
+.x{float:right;background:none;border:0;color:var(--dim);font-size:24px;cursor:pointer;line-height:1}
+.price{color:var(--gold);font-weight:800;font-size:16px}
+.dim{color:var(--dim);font-size:12px}
+.msg{color:var(--gold);text-align:center;margin:8px 0;min-height:18px;font-size:13px}
+.btn{display:block;width:100%;margin-top:10px;background:var(--green);color:#04220f;border:0;
+     border-radius:12px;padding:11px;font:800 15px inherit;text-align:center;text-decoration:none;cursor:pointer}
+.btn.o{background:var(--purple);color:#fff}
+.btn.r{background:var(--red);color:#fff}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.grid2{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:10px 0}
+input,select{background:var(--card);color:var(--text);border:1px solid var(--line);
+             border-radius:10px;padding:9px 11px;font:inherit;width:100%}
+input:focus,select:focus{outline:2px solid var(--purple);outline-offset:1px}
+.prizes{display:grid;grid-template-columns:repeat(auto-fill,minmax(90px,1fr));gap:6px;margin:10px 0}
+.prize{border:1px solid var(--line);border-radius:10px;background:var(--card);padding:8px 4px;text-align:center}
+.prize .e{font-size:20px}.prize .t{font-weight:700;font-size:11px;word-break:break-word}
+.prize .p{color:var(--gold);font-weight:800;font-size:11px}
+.roll{position:relative;overflow:hidden;border-radius:14px;margin:10px 0;background:#0f0d15;padding:8px 0}
+.strip{display:flex;transition:transform 3.8s cubic-bezier(.12,.7,.1,1)}
+.tile{flex:0 0 78px;margin:0 4px;border:1px solid var(--line);border-radius:10px;
+      background:var(--card);padding:6px 3px;text-align:center}
+.tile .e{font-size:22px}.tile .t{font-size:10px;font-weight:700;word-break:break-word}
+.needle{position:absolute;left:50%;top:0;bottom:0;width:2px;background:var(--green);
+        box-shadow:0 0 8px var(--green)}
+.win{border:1px solid var(--green);border-radius:14px;background:var(--card);text-align:center;padding:12px}
+.win .e{font-size:44px}
+/* Мины */
+.mines{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin:10px 0}
+.cell{aspect-ratio:1;border-radius:8px;background:linear-gradient(135deg,#2a2540,#3d3560);
+      border:1px solid var(--line);font-size:20px;display:flex;align-items:center;
+      justify-content:center;cursor:pointer;color:#fff;font:inherit;padding:0}
+.cell.open{background:linear-gradient(135deg,#1e7a4a,#3ce07a);cursor:default}
+.cell.boom{background:linear-gradient(135deg,#c0392b,#ff7b5a);cursor:default}
+/* Апгрейд */
+.up-circle{display:flex;flex-direction:column;align-items:center;gap:6px;margin:14px 0}
+.up-circle .mult{font-size:36px;font-weight:800;color:var(--gold)}
+/* Плинко */
+.pk{display:flex;flex-direction:column;align-items:center;gap:4px;margin:10px 0}
+.pk-row{display:flex;gap:4px}
+.pk-slot{width:26px;height:14px;border-radius:4px;background:var(--card);
+         border:1px solid var(--line);font-size:9px;display:flex;align-items:center;
+         justify-content:center;color:var(--dim)}
+.pk-slot.on{background:linear-gradient(135deg,var(--purple),var(--pink));color:#fff;border-color:transparent}
+/* Инвентарь */
+.inv{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--line);
+     border-radius:12px;padding:10px 12px;margin:6px 0;font-size:13px}
+.inv .e{font-size:22px}.inv .t{font-weight:700;flex:1}
+.inv button{background:var(--green);color:#04220f;border:0;border-radius:8px;
+            padding:6px 10px;font:700 12px inherit;cursor:pointer}
+a:focus-visible,button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+@media(prefers-reduced-motion:reduce){.strip{transition:none}}
+</style></head>
+<body>
+<div id="app">
+  <div class="top"><h1>🍬 Sweetie Case</h1></div>
+  <div class="balwrap"><div class="bal" id="bal"></div></div>
+  <div id="view"></div>
+</div>
+<nav class="tabbar" id="tabbar"></nav>
+<div class="modal" id="modal"><div class="sheet" id="sheet"></div></div>
+<script>
+let D={cases:[],items:[],bot:"",link:"",api:"",live:[]},tab="home",TOKEN="",ME=null,busy=false,INV=[];
+try{TOKEN=localStorage.getItem("sc_t")||"";}catch(e){}
+const hs=new URLSearchParams(location.hash.slice(1));
+if(hs.get("s")){TOKEN=hs.get("s");try{localStorage.setItem("sc_t",TOKEN);}catch(e){}history.replaceState(null,"",location.pathname+location.search);}
+const $=id=>document.getElementById(id);
+const el=(t,c,x)=>{const e=document.createElement(t);if(c)e.className=c;if(x!==undefined)e.textContent=x;return e;};
+const ico=p=>p.kind==="stars"?"⭐":"🎁";
+const TOPUPS=[50,100,250,500,1000];
+
+
+function bot(param){const b=(D.link||"").replace("{bot}",D.bot||"").replace(/\?start=.*/,"?start="+param);return /^https?:\/\//.test(b)?b:"";}
+
+async function api(path,body){
+  const r=await fetch(D.api+path,{
+    method:body?"POST":"GET",
+    headers:Object.assign({"Content-Type":"application/json"},TOKEN?{Authorization:"Bearer "+TOKEN}:{}),
+    body:body?JSON.stringify(body):undefined
+  });
+  const j=await r.json().catch(()=>({}));
+  if(!r.ok){const e=new Error(j.error||"Ошибка");e.status=r.status;throw e;}
+  return j;
+}
+
+async function loadMe(){
+  if(D.api){try{D.live=(await api("/api/live")).live||[];}catch(e){}}
+  if(!D.api||!TOKEN){ME=null;balance();render();return;}
+  try{ME=await api("/api/me");}catch(e){ME=null;if(e.status===401){TOKEN="";try{localStorage.removeItem("sc_t");}catch(x){}}}
+  if(ME){try{INV=(await api("/api/inventory")).items||[];}catch(e){INV=[];}}
+  balance();render();
+}
+
+function balance(){
+  const box=$("bal");box.replaceChildren();
+  if(ME){
+    const b=el("button","plus","Пополнить");b.onclick=openTopup;
+    box.append(el("span","","⭐"),el("span","",String(ME.balance)),b);
+  }else if(D.api){
+    const a=el("a","plus","Войти через бота");a.href=bot("site")||"#";
+    box.append(el("span","","👤"),a);
+  }else{
+    const a=el("a","plus","Пополнить в боте");a.href=bot("topup")||"#";
+    box.append(el("span","","⭐"),a);
+  }
+}
+
+function sheet(...nodes){
+  const s=$("sheet");s.replaceChildren();
+  const x=el("button","x","×");x.onclick=()=>{if(!busy)$("modal").classList.remove("show");};
+  s.append(x,...nodes);$("modal").classList.add("show");return s;
+}
+
+function openTopup(){
+  const msg=el("div","msg"),g=el("div","grid2");
+  if(!ME){const a=el("a","btn o","Пополнить в боте");a.href=bot("topup")||"#";
+    sheet(el("h2","","Пополнение"),a);return;}
+  for(const n of TOPUPS){
+    const b=el("button","btn o","+"+n+" ⭐");
+    b.onclick=async()=>{
+      try{await api("/api/topup",{amount:n});
+        msg.textContent="Счёт отправлен в бота: оплатите его там, баланс обновится сам.";
+        const t0=Date.now(),old=ME.balance;
+        const iv=setInterval(async()=>{
+          await loadMe();
+          if((ME&&ME.balance!==old)||Date.now()-t0>120000)clearInterval(iv);
+        },4000);
+      }catch(e){msg.textContent=e.message;}
+    };
+    g.append(b);
+  }
+  const a=el("a","btn","Открыть бота");a.href=bot("topup")||"#";
+  sheet(el("h2","","Пополнение баланса"),el("div","dim","Оплата Stars в чате с ботом."),g,msg,a);
+}
+
+function openWithdraw(){
+  const msg=el("div","msg");
+  const inp=el("input");inp.type="number";inp.min="10";inp.placeholder="Сумма ⭐ (мин. 10)";
+  const btn=el("button","btn r","Вывести");
+  btn.onclick=async()=>{
+    const amt=parseInt(inp.value||"0",10);
+    if(!amt||amt<10){msg.textContent="Минимум 10 ⭐";return;}
+    btn.disabled=true;
+    try{
+      const r=await api("/api/withdraw",{amount:amt});
+      msg.textContent=r.message||"Заявка создана";
+      await loadMe();
+    }catch(e){msg.textContent=e.message;}
+    btn.disabled=false;
+  };
+  sheet(el("h2","","💸 Вывод баланса"),
+    el("div","dim","Заявка обрабатывается в течение 1 минуты. Повторный вывод — не раньше чем через минуту."),
+    el("div","grid2"),inp,btn,msg);
+}
+
+function openInv(){
+  const wrap=el("div","");
+  if(!INV.length){wrap.append(el("div","hint","🎁 Подарков пока нет. Киньте подарок боту — он появится здесь."));}
+  for(const it of INV){
+    const row=el("div","inv");
+    row.append(el("span","e","🎁"),el("span","t",it.title));
+    const b=el("button","","Продать");
+    b.onclick=async()=>{
+      const price=parseInt(prompt("Цена продажи (⭐):", "10")||"0",10);
+      if(!price||price<1){return;}
+      try{
+        const r=await api("/api/sell",{id:it.id,price});
+        alert("Продано! +"+price+" ⭐, баланс: "+r.balance);
+        await loadMe();openInv();
+      }catch(e){alert(e.message);}
+    };
+    row.append(b);
+    wrap.append(row);
+  }
+  sheet(el("h2","","🎁 Инвентарь"),wrap);
+}
+
+/* ---------------- Кейсы ---------------- */
+function tile(p){
+  const d=el("div","tile");
+  d.append(el("div","e",ico(p)),el("div","t",""+p.title));
+  return d;
+}
+async function spin(c){
+  if(busy)return;busy=true;
+  let res;
+  try{res=await api("/api/open",{case_id:c.id});}
+  catch(e){busy=false;alert(e.message);return;}
+  ME.balance=res.balance;
+  const N=40,WIN=33,box=el("div","roll"),strip=el("div","strip"),pool=[];
+  for(const p of c.prizes)for(let i=0;i<Math.max(1,Math.round(p.chance));i++)pool.push(p);
+  const won=c.prizes.find(x=>x.title===res.prize.title)||{title:res.prize.title,kind:res.prize.kind,chance:50};
+  for(let i=0;i<N;i++)strip.append(tile(i===WIN?won:pool[Math.floor(Math.random()*pool.length)]));
+  box.append(strip,el("div","needle"));
+  sheet(el("h2","","📦 "+c.title),box);
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    strip.style.transform="translateX("+(-(WIN*86-box.clientWidth/2+43))+"px)";
+  }));
+  setTimeout(()=>{
+    const w=el("div","win");
+    w.append(el("div","e",ico(won)),el("h2",""," "+won.title),
+      el("div","dim",won.kind==="stars"?"Уже на балансе":"Владелец выдаст приз — он уже уведомлён"));
+    const again=el("button","btn","🎰 Ещё раз ("+c.price+" ⭐)");
+    again.onclick=()=>spin(c);
+    busy=false;
+    sheet(el("h2","","📦 "+c.title),w,el("div","price","⭐ "+res.balance),again);
+    balance();
+  },4000);
+}
+function openCase(c){
+  const g=el("div","prizes");
+  for(const p of c.prizes){
+    const d=el("div","prize");
+    d.append(el("div","e",ico(p)),el("div","t",p.title),el("div","p",p.chance+"%"));
+    g.append(d);
+  }
+  let act;
+  if(ME){
+    act=el("button","btn","🎰 Открыть за "+c.price+" ⭐");
+    act.onclick=()=>spin(c);
+  }else{
+    act=el("a","btn",D.api?"Войти через бота и открыть":"🎰 Открыть в боте");
+    act.href=(D.api?bot("site"):bot("case_"+c.id))||"#";
+  }
+  sheet(el("h2","","📦 "+c.title),el("div","price",c.price+" ⭐"),g,act);
+}
+
+/* ---------------- Мины ---------------- */
+function openMines(){
+  const msg=el("div","msg");
+  const inp=el("input");inp.type="number";inp.min="1";inp.placeholder="Ставка ⭐";
+  const sel=el("select");
+  for(let m=1;m<=24;m++)sel.append(new Option("Мин: "+m,m));
+  sel.value="3";
+  const start=el("button","btn","🎮 Начать игру");
+  let active=false,bet=0,mines=3,picks=[],mult=1;
+  const grid=el("div","mines");
+  const draw=()=>{
+    grid.replaceChildren();
+    for(let i=0;i<25;i++){
+      const c=el("button","cell",picks.includes(i)?"💎":"");
+      if(picks.includes(i))c.classList.add("open");
+      if(!active)c.style.opacity=".6";
+      c.onclick=async()=>{
+        if(!active||picks.includes(i))return;
+        try{
+          const r=await api("/api/mines",{bet,mines,picks:[...picks,i]});
+          if(r.boom){
+            active=false;
+            picks.push(i);
+            grid.replaceChildren();
+            for(let j=0;j<25;j++){
+              const cc=el("button","cell",r.mines.includes(j)?"💣":(picks.includes(j)?"💎":""));
+              if(r.mines.includes(j))cc.classList.add("boom");
+              else if(picks.includes(j))cc.classList.add("open");
+              grid.append(cc);
+            }
+            msg.textContent="💥 Бум! Проиграли "+bet+" ⭐";
+            balance();
+            start.disabled=false;
+            return;
+          }
+          picks.push(i);
+          mult=r.mult;
+          draw();
+          msg.textContent="Множитель x"+r.mult+" · Забрать: "+r.win+" ⭐";
+        }catch(e){msg.textContent=e.message;}
+      };
+      grid.append(c);
+    }
+  };
+  draw();
+  start.onclick=async()=>{
+    const b=parseInt(inp.value||"0",10);
+    if(!b||b<1){msg.textContent="Ставка от 1 ⭐";return;}
+    if(!ME){msg.textContent="Войдите через бота";return;}
+    if(b>(ME.balance||0)){msg.textContent="Недостаточно средств";return;}
+    try{
+      const first=await api("/api/mines",{bet:b,mines:parseInt(sel.value,10),picks:[]});
+      if(first.boom){msg.textContent="Сразу мина 🙈";balance();return;}
+      active=true;bet=b;mines=parseInt(sel.value,10);picks=[];mult=1;
+      draw();
+      msg.textContent="Кликайте клетки, чтобы открыть алмазы.";
+      start.disabled=true;
+    }catch(e){msg.textContent=e.message;}
+  };
+  sheet(el("h2","","💣 Мины"),el("div","dim","Открывайте клетки. Чем больше открыли — тем выше множитель. Попадёте на мину — потеряете ставку."),
+    el("div","grid2"),inp,sel,start,grid,msg);
+}
+
+
+
+/* ---------------- Апгрейд ---------------- */
+function openUpgrade(){
+  const msg=el("div","msg");
+  const inp=el("input");inp.type="number";inp.min="1";inp.placeholder="Ставка ⭐";
+  const sel=el("select");
+  [1.1,1.5,2,3,5,10,25,50].forEach(m=>sel.append(new Option("x"+m,m)));
+  sel.value="2";
+  const circle=el("div","up-circle");
+  const mult=el("div","mult","x2.0");
+  circle.append(mult);
+  const btn=el("button","btn","🎰 Апгрейд");
+  btn.onclick=async()=>{
+    const b=parseInt(inp.value||"0",10),target=parseFloat(sel.value);
+    if(!b||b<1){msg.textContent="Ставка от 1 ⭐";return;}
+    if(!ME){msg.textContent="Войдите через бота";return;}
+    btn.disabled=true;
+    try{
+      const r=await api("/api/upgrade",{bet:b,target_mult:target});
+      msg.textContent=r.win?("🎉 Победа! +"+r.payout+" ⭐"):("💀 Проигрыш — "+b+" ⭐");
+      mult.textContent=r.win?"✅ x"+target:"💀";
+      await loadMe();
+    }catch(e){msg.textContent=e.message;}
+    btn.disabled=false;
+  };
+  sel.onchange=()=>mult.textContent="x"+parseFloat(sel.value).toFixed(1);
+  sheet(el("h2","","📈 Апгрейд"),el("div","dim","Шанс выигрыша = 1/множитель. При победе — ставка × множитель."),
+    circle,el("div","grid2"),inp,sel,btn,msg);
+}
+
+/* ---------------- Плинко ---------------- */
+function openPlinko(){
+  const msg=el("div","msg");
+  const inp=el("input");inp.type="number";inp.min="1";inp.placeholder="Ставка ⭐";
+  const sel=el("select");
+  for(let r=8;r<=16;r++)sel.append(new Option(r+" рядов",r));
+  sel.value="12";
+  const board=el("div","pk");
+  const drawPath=path=>{
+    board.replaceChildren();
+    let pos=0;
+    for(let row=0;row<path.length;row++){
+      const r=el("div","pk-row");
+      for(let i=0;i<row+1;i++){
+        const slot=el("div","pk-slot");
+        if(i===pos&&(row===path.length-1||row===0||true))slot.classList.add("on");
+        r.append(slot);
+      }
+      board.append(r);
+      if(path[row]===1)pos++;
+    }
+  };
+  const btn=el("button","btn","🎲 Бросить");
+  btn.onclick=async()=>{
+    const b=parseInt(inp.value||"0",10),rows=parseInt(sel.value,10);
+    if(!b||b<1){msg.textContent="Ставка от 1 ⭐";return;}
+    if(!ME){msg.textContent="Войдите через бота";return;}
+    btn.disabled=true;
+    try{
+      const r=await api("/api/plinko",{bet:b,rows});
+      // анимация пути
+      let pos=0;
+      for(let step=0;step<r.path.length;step++){
+        pos+=r.path[step];
+        drawPath(r.path.slice(0,step+1));
+        await new Promise(res=>setTimeout(res,80));
+      }
+      msg.textContent="🎯 Множитель x"+r.mult+" · Выигрыш "+r.win+" ⭐";
+      await loadMe();
+    }catch(e){msg.textContent=e.message;}
+    btn.disabled=false;
+  };
+  sheet(el("h2","","🎯 Плинко"),el("div","dim","Шарик падает влево/вправо. Чем ближе к центру — тем меньше множитель, чем ближе к краю — тем больше."),
+    el("div","grid2"),inp,sel,btn,board,msg);
+}
+
+/* ---------------- Профиль ---------------- */
+function openProfile(){
+  const wrap=el("div","");
+  if(ME){
+    wrap.append(el("h2","","👤 "+ME.name),el("div","dim","ID "+ME.id));
+    wrap.append(el("div","price","⭐ "+ME.balance));
+    const g=el("div","grid2");
+    const b1=el("button","btn o","Пополнить");b1.onclick=openTopup;
+    const b2=el("button","btn r","Вывести");b2.onclick=openWithdraw;
+    const b3=el("button","btn","Инвентарь");b3.onclick=openInv;
+    g.append(b1,b2,b3);
+    wrap.append(g);
+    const out=el("button","btn o","Выйти");
+    out.style.background="#3a3d4d";
+    out.onclick=()=>{try{localStorage.removeItem("sc_t");}catch(e){}TOKEN="";ME=null;INV=[];balance();render();};
+    wrap.append(out);
+  }else{
+    wrap.append(el("h2","","Гость"),el("div","dim","Войдите через бота, чтобы видеть баланс и инвентарь."));
+    const a=el("a","btn o","Войти через бота");a.href=bot("site")||"#";
+    wrap.append(a);
+  }
+  sheet(wrap);
+}
+
+/* ---------------- Рендер ---------------- */
+function big(cls,em,title,sub,onclick,badge,price){
+  const b=el("button","big "+cls),t=el("div","");b.onclick=onclick;
+  t.append(el("h3","",title),el("small","",sub));
+  if(badge){const bd=el("span","badge",badge);bd.style.cssText="display:inline-block;background:#fff;color:#111;border-radius:10px;padding:2px 8px;font-size:10px;font-weight:600;margin-top:3px";t.append(bd);}
+  b.append(el("div","em",em),t);
+  if(price)b.append(el("div","pr",price));
+  return b;
+}
+function render(){
+  const v=$("view");v.replaceChildren();
+  const tabs=[["home","🎮","Главная"],["games","🎲","Игры"],["cases","📦","Кейсы"],["nft","🖼","NFT"],["me","👤","Профиль"]];
+  const bar=$("tabbar");bar.replaceChildren();
+  for(const [k,i,t] of tabs){
+    const b=el("button",k===tab?"on":"");
+    b.append(el("span","i",i),el("span","",t));
+    b.onclick=()=>{tab=k;render();window.scrollTo(0,0);};
+    bar.append(b);
+  }
+  const items=D.items.filter(i=>i.kind==="nft");
+
+  if(tab==="home"){
+    const top=D.live.length?D.live:D.cases.map(c=>c.prizes[0]).filter(Boolean);
+    const lv=el("div","live");
+    lv.append(el("b","",D.live.length?"LIVE":"TOP"));
+    if(!top.length)lv.append(el("span","dim","Скоро здесь появятся дропы"));
+    for(const p of top.slice(0,20))lv.append(el("span","",ico(p)));
+    v.append(lv,
+      big("gb","📦","Кейсы",D.cases.length+" кейсов",()=>{tab="cases";render();}),
+      big("gp","🎮","Игры","Мины · Апгрейд · Плинко",()=>{tab="games";render();},"NEW"),
+      big("gu","🖼","NFT-лоты",items.length+" лотов",()=>{tab="nft";render();}),
+      big("go","⭐","Пополнить","Баланс общий с ботом",openTopup),
+      el("div","hint","Шансы точные: именно по ним сервер выбирает приз."));
+  }else if(tab==="games"){
+    v.append(el("h2","sec","🎲 Игры"));
+    v.append(
+      big("gm","💣","Мины","Ставка · поле 5×5 · открывайте клетки",openMines),
+      big("gu","📈","Апгрейд","Шанс = 1/множитель",openUpgrade),
+      big("gpl","🎯","Плинко","Шарик падает · множители по краям",openPlinko),
+      el("div","hint","Все игры считаются на сервере. Баланс общий с ботом."));
+  }else if(tab==="cases"){
+    v.append(el("h2","sec","📦 Кейсы"));
+    if(!D.cases.length)v.append(el("div","hint","👻 Кейсов пока нет. Загляните позже."));
+    for(const c of D.cases){
+      v.append(big("gp","📦",c.title,"призов: "+c.prizes.length,()=>openCase(c),"",c.price+" ⭐"));
+    }
+  }else if(tab==="nft"){
+    v.append(el("h2","sec","🖼 NFT-лоты"));
+    if(!items.length)v.append(el("div","hint","👻 NFT-лотов пока нет."));
+    for(const i of items){
+      v.append(big("gp","🖼",i.title,"NFT",()=>{const a=bot("buy_"+i.id);if(a)location.href=a;},"",i.price+" ⭐"));
+    }
+  }else{
+    v.append(el("h2","sec","👤 Профиль"));
+    if(ME){
+      v.append(big("gu","👤",ME.name,"ID "+ME.id+" · баланс "+ME.balance+" ⭐",openProfile));
+      const g=el("div","grid2");
+      const b1=el("button","btn o","💰 Пополнить");b1.onclick=openTopup;
+      const b2=el("button","btn r","💸 Вывести");b2.onclick=openWithdraw;
+      const b3=el("button","btn","🎁 Инвентарь ("+INV.length+")");b3.onclick=openInv;
+      g.append(b1,b2,b3);
+      g.style.padding="0 14px";
+      v.append(g);
+      const out=el("button","btn o","Выйти");
+      out.style.cssText="margin:10px 14px;background:#3a3d4d";
+      out.onclick=()=>{try{localStorage.removeItem("sc_t");}catch(e){}TOKEN="";ME=null;INV=[];balance();render();};
+      v.append(out);
+    }else{
+      v.append(el("div","hint","Войдите через бота, чтобы видеть баланс и инвентарь."));
+      const a=el("a","plus","Войти через бота");
+      a.style.cssText="margin:0 14px;display:inline-block;text-align:center";
+      a.href=bot("site")||"#";
+      v.append(a);
+    }
+  }
+}
+
+$("modal").onclick=e=>{if(e.target.id==="modal"&&!busy)$("modal").classList.remove("show");};
+Promise.all([
+  fetch("cases.json?"+Date.now()).then(r=>r.json()).catch(()=>({})),
+  fetch("items.json?"+Date.now()).then(r=>r.json()).catch(()=>({}))
+]).then(([c,i])=>{
+  D={cases:c.cases||[],items:i.items||[],bot:c.bot||i.bot||"",link:c.link||i.link||"",api:(c.api||"").replace(/\/$/,""),live:[]};
+  render();return loadMe();
+});
+balance();render();
+</script></body></html>
