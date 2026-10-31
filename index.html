@@ -526,29 +526,29 @@ Promise.all([
 });
 balance();render();
 
-// 1. Инициализация Telegram Mini App
-if (window.Telegram && window.Telegram.WebApp) {
+// Инициализация
+if (window.Telegram?.WebApp) {
     window.Telegram.WebApp.ready();
-    window.Telegram.WebApp.expand();
 }
 
-// 2. Перехватчик кликов для всех ссылок
+// Перехватчик кликов по всей странице
 document.addEventListener('click', function(e) {
-    // Ищем, не кликнули ли мы по ссылке или кнопке
-    const link = e.target.closest('a') || e.target.closest('.btn') || e.target.closest('.big') || e.target.closest('.plus');
-    
-    if (link) {
-        // Достаем ссылку (из href или из скрытого атрибута)
-        const url = link.getAttribute('href') || link.dataset.url;
+    // Если нажали на кнопку или ссылку
+    const btn = e.target.closest('a, button');
+    if (!btn) return;
+
+    // Берем текст с кнопки
+    const text = btn.innerText || "";
+
+    // Если на кнопке написано "Войти" или "Пополнить в боте" или "Открыть бота"
+    if (text.includes('Войти') || text.includes('Открыть бота') || text.includes('в боте')) {
+        e.preventDefault(); // Отменяем стандартное поведение
         
-        // Если ссылка ведет в телеграм
-        if (url && url.includes('t.me')) {
-            e.preventDefault(); // Отменяем стандартный переход
-            if (window.Telegram && window.Telegram.WebApp) {
-                window.Telegram.WebApp.openTelegramLink(url);
-            } else {
-                window.location.href = url;
-            }
+        // Закрываем мини-апп. Пользователь окажется в чате с ботом.
+        if (window.Telegram?.WebApp) {
+            window.Telegram.WebApp.close();
+        } else {
+            window.location.reload(); // Если открыто в браузере - просто перезагружаем
         }
     }
 });
